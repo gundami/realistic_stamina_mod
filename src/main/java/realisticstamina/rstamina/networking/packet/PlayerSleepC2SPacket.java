@@ -17,6 +17,7 @@ public class PlayerSleepC2SPacket {
 
         playerstate.energy = 100.0;
         playerstate.maxStamina = (playerstate.totalStamina * (playerstate.energy / 100));
+        playerstate.energyFromResting = 0.0;
         serverState.markDirty();
 
     }

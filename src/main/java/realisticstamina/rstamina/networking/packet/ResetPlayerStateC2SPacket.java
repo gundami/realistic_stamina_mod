@@ -16,11 +16,15 @@ public class ResetPlayerStateC2SPacket {
         ServerState serverState = ServerState.getServerState(server);
         PlayerState playerstate = ServerState.getPlayerState(player);
 
-        playerstate.stamina = RStaminaMod.config.totalStamina;
-        playerstate.maxStamina = RStaminaMod.config.totalStamina;
-        playerstate.totalStamina = RStaminaMod.config.totalStamina;
-        playerstate.energy = 100.0;
-        serverState.markDirty();
+        if (player.getInventory().getMainHandStack().getItem() == RStaminaMod.TEST_ITEM) {
+
+            playerstate.stamina = RStaminaMod.config.totalStamina;
+            playerstate.maxStamina = RStaminaMod.config.totalStamina;
+            playerstate.totalStamina = RStaminaMod.config.totalStamina;
+            playerstate.energy = 100.0;
+            serverState.markDirty();
+
+        }
 
     }
 

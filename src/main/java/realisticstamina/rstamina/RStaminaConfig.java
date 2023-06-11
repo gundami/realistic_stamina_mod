@@ -12,10 +12,12 @@ public class RStaminaConfig extends Config {
     public double restingEnergyGainTick = 0.002;
     @ConfigEntry(comment = "If enabled you can gain energy by sitting on things. (Default: true)")
     public boolean enableResting = true;
-    @ConfigEntry(comment = "Whether or not you rest when riding a horse (Default: true)")
+    @ConfigEntry(comment = "Whether or not you rest when riding a horse, donkey or mule (Default: true)")
     public boolean restRidingHorse = true;
     @ConfigEntry(comment = "Whether or not you rest while moving your boat (Default: false)")
     public boolean restWhileBoatMoving = false;
+    @ConfigEntry(comment = "Maximum energy that you can gain from resting. Resets when you sleep. (Default: 5.0)")
+    public double maxRestingEnergyGain = 5.0;
 
     public RStaminaConfig() {
         super(ConfigOptions.mod(RStaminaMod.modid));

@@ -7,5 +7,6 @@ public class PlayerState {
     public double maxStamina = RStaminaMod.config.totalStamina;
     public double totalStamina = RStaminaMod.config.totalStamina;
     public double energy = 100.0;
+    public double energyFromResting = 0.0;
 
 }

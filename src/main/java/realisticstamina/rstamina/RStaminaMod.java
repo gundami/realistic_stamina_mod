@@ -40,6 +40,15 @@ public class RStaminaMod implements ModInitializer {
 			ServerState serverState = ServerState.getServerState(handler.player.world.getServer());
 			PlayerState playerState = ServerState.getPlayerState(handler.player);
 
+			if (playerState.totalStamina != config.totalStamina) {
+
+				playerState.totalStamina = config.totalStamina;
+				playerState.maxStamina = (playerState.totalStamina * (playerState.energy / 100));
+				playerState.stamina = playerState.maxStamina;
+				serverState.markDirty();
+
+			}
+
 		});
 
 	}

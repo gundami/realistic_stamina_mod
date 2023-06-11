@@ -21,10 +21,9 @@ public class RidingC2SPacket {
         String vehicle = buf.readString();
         boolean isRiding = buf.readBoolean();
 
-        if (RStaminaMod.config.enableResting) {
+        if (RStaminaMod.config.enableResting && playerstate.energyFromResting < RStaminaMod.config.maxRestingEnergyGain) {
             boolean rest = true;
-            RStaminaMod.LOGGER.info("V: " + vehicle + " R: " + isRiding);
-            if (Objects.equals(vehicle, "Horse")) {
+            if (Objects.equals(vehicle, "Horse") || Objects.equals(vehicle, "Donkey") || Objects.equals(vehicle, "Mule")) {
                 if (!RStaminaMod.config.restRidingHorse) {rest = false;}
             }
             if (!RStaminaMod.config.restWhileBoatMoving) {
@@ -39,6 +38,7 @@ public class RidingC2SPacket {
                     } else {
                         playerstate.energy += RStaminaMod.config.restingEnergyGainTick;
                         playerstate.maxStamina = (playerstate.totalStamina * (playerstate.energy / 100));
+                        playerstate.energyFromResting += RStaminaMod.config.restingEnergyGainTick;
                         serverState.markDirty();
                     }
                 }
