@@ -29,7 +29,8 @@
 		"fabricloader": ">=0.14.21",
 		"minecraft": "~1.19.2",
 		"java": ">=17",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"completeconfig": ">=2.1.0"
 	},
 	"suggests": {
 		"another-mod": "*"

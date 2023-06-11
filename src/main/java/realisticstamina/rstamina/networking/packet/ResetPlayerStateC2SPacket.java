@@ -6,6 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import realisticstamina.rstamina.PlayerState;
+import realisticstamina.rstamina.RStaminaMod;
 import realisticstamina.rstamina.ServerState;
 
 public class ResetPlayerStateC2SPacket {
@@ -15,9 +16,9 @@ public class ResetPlayerStateC2SPacket {
         ServerState serverState = ServerState.getServerState(server);
         PlayerState playerstate = ServerState.getPlayerState(player);
 
-        playerstate.stamina = 64.0;
-        playerstate.maxStamina = 64.0;
-        playerstate.totalStamina = 64.0;
+        playerstate.stamina = RStaminaMod.config.totalStamina;
+        playerstate.maxStamina = RStaminaMod.config.totalStamina;
+        playerstate.totalStamina = RStaminaMod.config.totalStamina;
         playerstate.energy = 100.0;
         serverState.markDirty();
 

@@ -20,6 +20,7 @@ public class NetworkingPackets {
     public static final Identifier REQUEST_PLAYERSTATE_C2S_PACKET_ID = new Identifier(RStaminaMod.modid, "request_playerstate_c2s_packet");
     public static final Identifier PLAYER_SLEEP_C2S_PACKET_ID = new Identifier(RStaminaMod.modid, "player_sleep_c2s_packet");
     public static final Identifier RESET_PLAYERSTATE_C2S_PACKET_ID = new Identifier(RStaminaMod.modid, "reset_playerstate_c2s_packet");
+    public static final Identifier RIDING_C2S_PACKET_ID = new Identifier(RStaminaMod.modid, "riding_c2s_packet");
 
     //S2C test
     public static final Identifier TEST_S2C_PACKET_ID = new Identifier(RStaminaMod.modid, "test_s2c_packet");
@@ -38,6 +39,7 @@ public class NetworkingPackets {
         ServerPlayNetworking.registerGlobalReceiver(REQUEST_PLAYERSTATE_C2S_PACKET_ID, RequestPlayerStateC2SPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(PLAYER_SLEEP_C2S_PACKET_ID, PlayerSleepC2SPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(RESET_PLAYERSTATE_C2S_PACKET_ID, ResetPlayerStateC2SPacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(RIDING_C2S_PACKET_ID, RidingC2SPacket::receive);
     }
 
     public static void registerS2CPackets() {

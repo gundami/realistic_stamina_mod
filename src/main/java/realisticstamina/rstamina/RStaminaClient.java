@@ -6,8 +6,12 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.PacketByteBuf;
 import realisticstamina.rstamina.client.StaminaHudOverlay;
 import realisticstamina.rstamina.networking.NetworkingPackets;
+
+import java.util.Objects;
 
 public class RStaminaClient implements ClientModInitializer {
 
@@ -33,11 +37,17 @@ public class RStaminaClient implements ClientModInitializer {
         //tick
         ClientTickEvents.START_CLIENT_TICK.register((client) -> {
             if (client.world != null) {
-
-
-
                 if (client.world.isClient()) {
+
                     ClientPlayNetworking.send(NetworkingPackets.UPDATE_STAMINA_C2S_PACKET_ID, PacketByteBufs.create());
+
+                    if (client.player.getVehicle() != null) {
+                        PacketByteBuf buf = PacketByteBufs.create();
+                        buf.writeString(client.player.getVehicle().getName().getString());
+                        buf.writeBoolean(client.player.isRiding());
+                        ClientPlayNetworking.send(NetworkingPackets.RIDING_C2S_PACKET_ID, buf);
+                    }
+
                 }
             }
         });
@@ -48,7 +58,19 @@ public class RStaminaClient implements ClientModInitializer {
 
                 if (entity.world.isClient()) {
 
-                    ClientPlayNetworking.send(NetworkingPackets.PLAYER_SLEEP_C2S_PACKET_ID, PacketByteBufs.create());
+                    MinecraftClient client = MinecraftClient.getInstance();
+
+                    if (client != null) { //todo fix one player sleeping regenerates all players energy
+
+                        RStaminaMod.LOGGER.info("stuff: " + entity.getName().getString() + " R: " + client.player.getName().getString());
+
+                        if (Objects.equals(entity.getName().getString(), client.player.getName().getString())) {
+
+                            ClientPlayNetworking.send(NetworkingPackets.PLAYER_SLEEP_C2S_PACKET_ID, PacketByteBufs.create());
+
+                        }
+
+                    }
 
                 }
 
