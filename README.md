@@ -6,6 +6,8 @@ This mod is available under the MIT license.
 ### Dependencies
 [Fabric Api](https://modrinth.com/mod/fabric-api/version/0.76.0+1.19.2) >=0.76.0 for mc 1.19.2
 
+[CompleteConfig](https://modrinth.com/mod/completeconfig/version/2.1.0) >=2.1.0 for mc 1.19.2
+
 # Features
 This mod adds a stamina and energy system to make getting around more interesting and challenging. You can no longer just sprint infinitely and have to pay attention to your stamina and energy. Its a good thing if you want to make the game more of a challenge while not changing it too much. 
 
@@ -14,4 +16,7 @@ The Stamina meter has a default max of 64 and will run out as you sprint. when i
 
 ### Energy System
 Your energy is a percentage of your maximum stamina. You will slowly lose energy the more stamina you use.
-Your energy will reset to 100% when you exit a bed so you do not have to skip the night to regenerate your energy. Be cautious when going for long periods of time without sleeping because your energy will run out and you will have less and less stamina until you regenerate your energy.
+Your energy will reset to 100% when you exit a bed so you do not have to skip the night to regenerate your energy. You can also slowly regenerate energy during the day by mounting something like a boat or a horse. Be cautious when going for long periods of time without sleeping because your energy will run out and you will have less and less stamina until you regenerate your energy.
+
+### Config
+Config file is located in "config/rstamina.conf".
