@@ -38,44 +38,28 @@ public class RStaminaClient implements ClientModInitializer {
         ClientTickEvents.START_CLIENT_TICK.register((client) -> {
             if (client.world != null) {
                 if (client.world.isClient()) {
-
                     ClientPlayNetworking.send(NetworkingPackets.UPDATE_STAMINA_C2S_PACKET_ID, PacketByteBufs.create());
-
                     if (client.player.getVehicle() != null) {
                         PacketByteBuf buf = PacketByteBufs.create();
                         buf.writeString(client.player.getVehicle().getName().getString());
                         buf.writeBoolean(client.player.isRiding());
                         ClientPlayNetworking.send(NetworkingPackets.RIDING_C2S_PACKET_ID, buf);
                     }
-
                 }
             }
         });
 
         EntitySleepEvents.STOP_SLEEPING.register((entity, blockPos) -> {
-
             if (entity.isPlayer()) {
-
                 if (entity.world.isClient()) {
-
                     MinecraftClient client = MinecraftClient.getInstance();
-
-                    if (client != null) { //todo fix one player sleeping regenerates all players energy
-
-                        RStaminaMod.LOGGER.info("stuff: " + entity.getName().getString() + " R: " + client.player.getName().getString());
-
+                    if (client != null) {
                         if (Objects.equals(entity.getName().getString(), client.player.getName().getString())) {
-
                             ClientPlayNetworking.send(NetworkingPackets.PLAYER_SLEEP_C2S_PACKET_ID, PacketByteBufs.create());
-
                         }
-
                     }
-
                 }
-
             }
-
         });
 
     }

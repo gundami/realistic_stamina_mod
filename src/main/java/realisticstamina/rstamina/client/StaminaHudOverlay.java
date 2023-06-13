@@ -8,6 +8,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import realisticstamina.rstamina.RStaminaClient;
+import realisticstamina.rstamina.RStaminaMod;
 import realisticstamina.rstamina.networking.NetworkingPackets;
 
 public class StaminaHudOverlay implements HudRenderCallback {
@@ -19,8 +20,8 @@ public class StaminaHudOverlay implements HudRenderCallback {
 
         //RStaminaMod.LOGGER.info("renderkajsd;flakjsdf");
 
-        int x = 10;
-        int y = 25;
+        int x = RStaminaMod.config.hudX;
+        int y = RStaminaMod.config.hudY;
 
         MinecraftClient client = MinecraftClient.getInstance();
 

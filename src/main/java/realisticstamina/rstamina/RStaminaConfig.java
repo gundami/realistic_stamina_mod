@@ -18,6 +18,10 @@ public class RStaminaConfig extends Config {
     public boolean restWhileBoatMoving = false;
     @ConfigEntry(comment = "Maximum energy that you can gain from resting. Resets when you sleep. (Default: 5.0)")
     public double maxRestingEnergyGain = 5.0;
+    @ConfigEntry(comment = "X coordinate of stamina and energy hud. 0 is farthest left. (Default: 10)")
+    public int hudX =  10;
+    @ConfigEntry(comment = "Y coordinate of stamina and energy hud. 0 is top of the screen. (Default: 25)")
+    public int hudY = 25;
 
     public RStaminaConfig() {
         super(ConfigOptions.mod(RStaminaMod.modid));
