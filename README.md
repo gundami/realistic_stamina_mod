@@ -16,7 +16,7 @@ The Stamina meter has a default max of 64 and will run out as you sprint. when i
 
 ### Energy System
 Your energy is a percentage of your maximum stamina. You will slowly lose energy the more stamina you use.
-Your energy will reset to 100% when you exit a bed so you do not have to skip the night to regenerate your energy. You can also slowly regenerate energy during the day by mounting something like a boat or a horse. Be cautious when going for long periods of time without sleeping because your energy will run out and you will have less and less stamina until you regenerate your energy.
+Your energy will reset to 100% when you exit a bed so you do not have to skip the night to regenerate your energy. You can also slowly regenerate energy during the day by mounting something like a boat or a horse but can only regenerate up to 5% this way, then you have to sleep.
 
 ### Config
-Config file is located in "config/rstamina.conf".
+Config file path is "config/rstamina.conf".
