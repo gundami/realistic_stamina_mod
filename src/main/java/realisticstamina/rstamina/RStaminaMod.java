@@ -4,8 +4,9 @@ import me.lortseam.completeconfig.data.ConfigOptions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import realisticstamina.rstamina.item.TestItem;
@@ -29,7 +30,7 @@ public class RStaminaMod implements ModInitializer {
 		ConfigOptions.mod(modid).branch(new String[]{"branch", "config"});
 
 		//items
-		Registry.register(Registry.ITEM, new Identifier("rstamina", "test_item"), TEST_ITEM);
+		Registry.register(Registries.ITEM, new Identifier("rstamina", "test_item"), TEST_ITEM);
 
 		//networking
 		NetworkingPackets.registerC2SPackets();
@@ -37,7 +38,7 @@ public class RStaminaMod implements ModInitializer {
 		//events
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 
-			ServerState serverState = ServerState.getServerState(handler.player.world.getServer());
+			ServerState serverState = ServerState.getServerState(handler.player.getWorld().getServer());
 			PlayerState playerState = ServerState.getPlayerState(handler.player);
 
 			if (playerState.totalStamina != config.totalStamina) {

@@ -51,7 +51,7 @@ public class RStaminaClient implements ClientModInitializer {
 
         EntitySleepEvents.STOP_SLEEPING.register((entity, blockPos) -> {
             if (entity.isPlayer()) {
-                if (entity.world.isClient()) {
+                if (entity.getWorld().isClient()) {
                     MinecraftClient client = MinecraftClient.getInstance();
                     if (client != null) {
                         if (Objects.equals(entity.getName().getString(), client.player.getName().getString())) {

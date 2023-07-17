@@ -20,7 +20,7 @@ public class UpdateStaminaC2SPacket {
 
         boolean waterLogged = false;
 
-        if (player.world.getBlockState(player.getBlockPos()) == Blocks.WATER.getDefaultState()) {
+        if (player.getWorld().getBlockState(player.getBlockPos()) == Blocks.WATER.getDefaultState()) {
 
             waterLogged = true;
 
@@ -59,6 +59,13 @@ public class UpdateStaminaC2SPacket {
             serverState.markDirty();
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 3, 5, true, false));
 
+        }
+
+        if (player.getHealth() <= 0.0) {
+            playerstate.stamina = playerstate.maxStamina;
+            playerstate.energy = 100.0;
+            playerstate.energyFromResting = 0.0;
+            playerstate.maxStamina = playerstate.totalStamina;
         }
 
     }
