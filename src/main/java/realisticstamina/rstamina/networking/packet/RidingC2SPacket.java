@@ -5,7 +5,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import realisticstamina.rstamina.PlayerState;
+import realisticstamina.rstamina.RStaminaPlayerState;
 import realisticstamina.rstamina.RStaminaMod;
 import realisticstamina.rstamina.ServerState;
 
@@ -16,7 +16,7 @@ public class RidingC2SPacket {
     public static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 
         ServerState serverState = ServerState.getServerState(server);
-        PlayerState playerstate = ServerState.getPlayerState(player);
+        RStaminaPlayerState playerstate = ServerState.getPlayerState(player);
 
         String vehicle = buf.readString();
         boolean isRiding = buf.readBoolean();
@@ -36,9 +36,9 @@ public class RidingC2SPacket {
                         playerstate.maxStamina = (playerstate.totalStamina * (playerstate.energy / 100));
                         serverState.markDirty();
                     } else {
-                        playerstate.energy += RStaminaMod.config.restingEnergyGainTick;
+                        playerstate.energy += playerstate.energyGainRate;
                         playerstate.maxStamina = (playerstate.totalStamina * (playerstate.energy / 100));
-                        playerstate.energyFromResting += RStaminaMod.config.restingEnergyGainTick;
+                        playerstate.energyFromResting += playerstate.energyGainRate;
                         serverState.markDirty();
                     }
                 }

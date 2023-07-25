@@ -14,7 +14,7 @@ public class ServerState extends PersistentState {
 
     int testInt = 0;
 
-    public HashMap<UUID, PlayerState> players = new HashMap<>();
+    public HashMap<UUID, RStaminaPlayerState> players = new HashMap<>();
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
@@ -29,7 +29,11 @@ public class ServerState extends PersistentState {
             playerStateNbt.putDouble("totalStamina", playerSate.totalStamina);
             playerStateNbt.putDouble("energy", playerSate.energy);
             playerStateNbt.putDouble("energyFromResting", playerSate.energyFromResting);
-
+            playerStateNbt.putBoolean("edited", playerSate.edited);
+            playerStateNbt.putDouble("staminaLossRate", playerSate.staminaLossRate);
+            playerStateNbt.putDouble("staminaGainRate", playerSate.staminaGainRate);
+            playerStateNbt.putDouble("energyLossRate", playerSate.energyLossRate);
+            playerStateNbt.putDouble("energyGainRate", playerSate.energyGainRate);
 
             playersNbtCompound.put(String.valueOf(UUID), playerStateNbt);
         });
@@ -45,7 +49,7 @@ public class ServerState extends PersistentState {
 
         NbtCompound playersTag = tag.getCompound("players");
         playersTag.getKeys().forEach(key -> {
-            PlayerState playerState = new PlayerState();
+            RStaminaPlayerState playerState = new RStaminaPlayerState();
 
             playerState.testplayerdata = playersTag.getCompound(key).getInt("testplayerdata");
             playerState.stamina = playersTag.getCompound(key).getDouble("stamina");
@@ -53,6 +57,11 @@ public class ServerState extends PersistentState {
             playerState.totalStamina = playersTag.getCompound(key).getDouble("totalStamina");
             playerState.energy = playersTag.getCompound(key).getDouble("energy");
             playerState.energyFromResting = playersTag.getCompound(key).getDouble("energyFromResting");
+            playerState.edited = playersTag.getCompound(key).getBoolean("edited");
+            playerState.staminaLossRate = playersTag.getCompound(key).getDouble("staminaLossRate");
+            playerState.staminaGainRate = playersTag.getCompound(key).getDouble("staminaGainRate");
+            playerState.energyLossRate = playersTag.getCompound(key).getDouble("energyLossRate");
+            playerState.energyGainRate = playersTag.getCompound(key).getDouble("energyGainRate");
 
             UUID uuid = UUID.fromString(key);
             serverState.players.put(uuid, playerState);
@@ -75,10 +84,10 @@ public class ServerState extends PersistentState {
         return serverState;
     }
 
-    public static PlayerState getPlayerState(LivingEntity player) {
+    public static RStaminaPlayerState getPlayerState(LivingEntity player) {
         ServerState serverState = getServerState(player.getWorld().getServer());
 
-        PlayerState playerState = serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerState());
+        RStaminaPlayerState playerState = serverState.players.computeIfAbsent(player.getUuid(), uuid -> new RStaminaPlayerState());
 
         return playerState;
     }

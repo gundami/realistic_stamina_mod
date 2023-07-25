@@ -1,16 +1,24 @@
 package realisticstamina.rstamina;
 
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import me.lortseam.completeconfig.data.ConfigOptions;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import realisticstamina.rstamina.item.TestItem;
 import realisticstamina.rstamina.networking.NetworkingPackets;
+
+import static net.minecraft.server.command.CommandManager.argument;
+import static net.minecraft.server.command.CommandManager.literal;
 
 public class RStaminaMod implements ModInitializer {
 
@@ -39,18 +47,141 @@ public class RStaminaMod implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 
 			ServerState serverState = ServerState.getServerState(handler.player.getWorld().getServer());
-			PlayerState playerState = ServerState.getPlayerState(handler.player);
+			RStaminaPlayerState playerState = ServerState.getPlayerState(handler.player);
 
-			if (playerState.totalStamina != config.totalStamina) {
+			if (!playerState.edited) { //if the playerstate wasn't edited then match with config
+				if (playerState.totalStamina != config.totalStamina) {
 
-				playerState.totalStamina = config.totalStamina;
-				playerState.maxStamina = (playerState.totalStamina * (playerState.energy / 100));
-				playerState.stamina = playerState.maxStamina;
-				serverState.markDirty();
+					playerState.totalStamina = config.totalStamina;
+					playerState.maxStamina = (playerState.totalStamina * (playerState.energy / 100));
+					playerState.stamina = playerState.maxStamina;
+					serverState.markDirty();
 
+				}
+				if (playerState.energyGainRate != config.restingEnergyGainTick) {
+					playerState.energyGainRate = config.restingEnergyGainTick;
+					serverState.markDirty();
+				}
 			}
 
 		});
 
+		//commands
+
+		//setTotalStamina command
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("setTotalStamina").requires(source -> source.hasPermissionLevel(4))
+				.then(argument("value", IntegerArgumentType.integer())
+					.then(argument("player", EntityArgumentType.player())
+						.executes(context -> {
+
+							ServerState serverState = ServerState.getServerState(EntityArgumentType.getPlayer(context, "player").getWorld().getServer());
+							RStaminaPlayerState playerState = ServerState.getPlayerState(EntityArgumentType.getPlayer(context, "player"));
+
+							playerState.totalStamina = IntegerArgumentType.getInteger(context, "value");
+							playerState.edited = true;
+							playerState.maxStamina = (playerState.totalStamina * (playerState.energy / 100));
+							playerState.stamina = playerState.maxStamina;
+							serverState.markDirty();
+
+							context.getSource().sendMessage(Text.literal("Set " + EntityArgumentType.getPlayer(context, "player").getName().getString() + "'s total stamina to " + IntegerArgumentType.getInteger(context, "value")));
+
+							return 1;
+						})))));
+
+		//resetStaminaStats command
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("resetStaminaStats").requires(source -> source.hasPermissionLevel(4))
+							.then(argument("player", EntityArgumentType.player())
+								.executes(context -> {
+
+									ServerState serverState = ServerState.getServerState(EntityArgumentType.getPlayer(context, "player").getWorld().getServer());
+									RStaminaPlayerState playerstate = ServerState.getPlayerState(EntityArgumentType.getPlayer(context, "player"));
+
+									playerstate.stamina = RStaminaMod.config.totalStamina;
+									playerstate.maxStamina = RStaminaMod.config.totalStamina;
+									playerstate.totalStamina = RStaminaMod.config.totalStamina;
+									playerstate.energy = 100.0;
+									playerstate.edited = false;
+									playerstate.staminaLossRate = 0.25;
+									playerstate.staminaGainRate = 0.125;
+									playerstate.energyLossRate = 0.004;
+									playerstate.energyGainRate = RStaminaMod.config.restingEnergyGainTick;
+									serverState.markDirty();
+
+									context.getSource().sendMessage(Text.literal("Reset " + EntityArgumentType.getPlayer(context, "player").getName().getString() + "'s stamina stats."));
+
+									return 1;
+								}))));
+
+		//setStaminaLossRate
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("setStaminaLossRate").requires(source -> source.hasPermissionLevel(4))
+				.then(argument("value", DoubleArgumentType.doubleArg())
+						.then(argument("player", EntityArgumentType.player())
+								.executes(context -> {
+
+									ServerState serverState = ServerState.getServerState(EntityArgumentType.getPlayer(context, "player").getWorld().getServer());
+									RStaminaPlayerState playerState = ServerState.getPlayerState(EntityArgumentType.getPlayer(context, "player"));
+
+									playerState.staminaLossRate = DoubleArgumentType.getDouble(context, "value");
+									playerState.edited = true;
+									serverState.markDirty();
+
+									context.getSource().sendMessage(Text.literal("Set " + EntityArgumentType.getPlayer(context, "player").getName().getString() + "'s stamina loss rate to " + DoubleArgumentType.getDouble(context, "value")));
+
+									return 1;
+								})))));
+
+		//setStaminaGainRate
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("setStaminaGainRate").requires(source -> source.hasPermissionLevel(4))
+				.then(argument("value", DoubleArgumentType.doubleArg())
+						.then(argument("player", EntityArgumentType.player())
+								.executes(context -> {
+
+									ServerState serverState = ServerState.getServerState(EntityArgumentType.getPlayer(context, "player").getWorld().getServer());
+									RStaminaPlayerState playerState = ServerState.getPlayerState(EntityArgumentType.getPlayer(context, "player"));
+
+									playerState.staminaGainRate = DoubleArgumentType.getDouble(context, "value");
+									playerState.edited = true;
+									serverState.markDirty();
+
+									context.getSource().sendMessage(Text.literal("Set " + EntityArgumentType.getPlayer(context, "player").getName().getString() + "'s stamina gain rate to " + DoubleArgumentType.getDouble(context, "value")));
+
+									return 1;
+								})))));
+
+		//setEnergyLossRate
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("setEnergyLossRate").requires(source -> source.hasPermissionLevel(4))
+				.then(argument("value", DoubleArgumentType.doubleArg())
+						.then(argument("player", EntityArgumentType.player())
+								.executes(context -> {
+
+									ServerState serverState = ServerState.getServerState(EntityArgumentType.getPlayer(context, "player").getWorld().getServer());
+									RStaminaPlayerState playerState = ServerState.getPlayerState(EntityArgumentType.getPlayer(context, "player"));
+
+									playerState.energyLossRate = DoubleArgumentType.getDouble(context, "value");
+									playerState.edited = true;
+									serverState.markDirty();
+
+									context.getSource().sendMessage(Text.literal("Set " + EntityArgumentType.getPlayer(context, "player").getName().getString() + "'s energy loss rate to " + DoubleArgumentType.getDouble(context, "value")));
+
+									return 1;
+								})))));
+
+		//setEnergyGainRate
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("setEnergyGainRate").requires(source -> source.hasPermissionLevel(4))
+				.then(argument("value", DoubleArgumentType.doubleArg())
+						.then(argument("player", EntityArgumentType.player())
+								.executes(context -> {
+
+									ServerState serverState = ServerState.getServerState(EntityArgumentType.getPlayer(context, "player").getWorld().getServer());
+									RStaminaPlayerState playerState = ServerState.getPlayerState(EntityArgumentType.getPlayer(context, "player"));
+
+									playerState.energyGainRate = DoubleArgumentType.getDouble(context, "value");
+									playerState.edited = true;
+									serverState.markDirty();
+
+									context.getSource().sendMessage(Text.literal("Set " + EntityArgumentType.getPlayer(context, "player").getName().getString() + "'s energy gain rate to " + DoubleArgumentType.getDouble(context, "value")));
+
+									return 1;
+								})))));
 	}
 }

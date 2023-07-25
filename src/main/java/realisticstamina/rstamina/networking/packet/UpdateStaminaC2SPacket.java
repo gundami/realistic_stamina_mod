@@ -8,7 +8,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import realisticstamina.rstamina.PlayerState;
+import realisticstamina.rstamina.RStaminaPlayerState;
 import realisticstamina.rstamina.ServerState;
 
 public class UpdateStaminaC2SPacket {
@@ -16,7 +16,7 @@ public class UpdateStaminaC2SPacket {
     public static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 
         ServerState serverState = ServerState.getServerState(server);
-        PlayerState playerstate = ServerState.getPlayerState(player);
+        RStaminaPlayerState playerstate = ServerState.getPlayerState(player);
 
         boolean waterLogged = false;
 
@@ -30,16 +30,17 @@ public class UpdateStaminaC2SPacket {
 
             if (!player.isCreative() && !player.isSpectator()) {
 
-                playerstate.stamina -= 0.25;
-                playerstate.energy -= 0.004;
+                playerstate.stamina -= playerstate.staminaLossRate;
+                playerstate.energy -= playerstate.energyLossRate;
                 playerstate.maxStamina = (playerstate.totalStamina * (playerstate.energy / 100));
                 serverState.markDirty();
             }
 
         } else if (!player.isSprinting() && !player.isSwimming() && !player.isClimbing() && !waterLogged && playerstate.stamina < playerstate.maxStamina) {
 
-            playerstate.stamina += 0.125;
-            if (playerstate.stamina >  playerstate.maxStamina) {
+            playerstate.stamina += playerstate.staminaGainRate;
+            //RStaminaMod.LOGGER.info("stamina: " + playerstate.staminaGainRate);
+            if (playerstate.stamina > playerstate.maxStamina) {
                 playerstate.stamina = playerstate.maxStamina;
             }
 
@@ -59,6 +60,10 @@ public class UpdateStaminaC2SPacket {
             serverState.markDirty();
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 3, 5, true, false));
 
+        }
+
+        if (playerstate.stamina > playerstate.maxStamina) {
+            playerstate.stamina = playerstate.maxStamina;
         }
 
         if (player.getHealth() <= 0.0) {

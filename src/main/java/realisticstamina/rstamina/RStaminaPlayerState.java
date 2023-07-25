@@ -1,6 +1,6 @@
 package realisticstamina.rstamina;
 
-public class PlayerState {
+public class RStaminaPlayerState {
     public int testplayerdata = 200;
 
     public double stamina = RStaminaMod.config.totalStamina;
@@ -8,5 +8,13 @@ public class PlayerState {
     public double totalStamina = RStaminaMod.config.totalStamina;
     public double energy = 100.0;
     public double energyFromResting = 0.0;
+    public boolean edited = false;
+
+    //rates
+    public double staminaLossRate = 0.25;
+    public double staminaGainRate = 0.125;
+
+    public double energyLossRate = 0.004;
+    public double energyGainRate = RStaminaMod.config.restingEnergyGainTick;
 
 }
