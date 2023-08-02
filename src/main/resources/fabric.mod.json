@@ -3,16 +3,16 @@
 	"id": "rstamina",
 	"version": "${version}",
 	"name": "Realistic Stamina",
-	"description": "Adds stamina in a realistic sorta way.",
+	"description": "Adds a realistic stamina and energy system.",
 	"authors": [
 		"sparkierkan7"
 	],
 	"contact": {
-		"homepage": "",
-		"sources": ""
+		"homepage": "https://modrinth.com/mod/realistic-stamina",
+		"sources": "https://github.com/Sparkierkan7/realistic_stamina_mod"
 	},
 	"license": "MIT",
-	"icon": "assets/rstamina/icon.png",
+	"icon": "assets/rstamina/copper_clock.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [

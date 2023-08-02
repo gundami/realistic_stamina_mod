@@ -26,6 +26,10 @@ public class UpdateStaminaC2SPacket {
 
         }
 
+        if (playerstate.staminaRegenCooldown > 0) {
+            playerstate.staminaRegenCooldown -= 1;
+        }
+
         if (player.isSprinting() || player.isSwimming()) {
 
             if (!player.isCreative() && !player.isSpectator()) {
@@ -38,10 +42,18 @@ public class UpdateStaminaC2SPacket {
 
         } else if (!player.isSprinting() && !player.isSwimming() && !player.isClimbing() && !waterLogged && playerstate.stamina < playerstate.maxStamina) {
 
-            playerstate.stamina += playerstate.staminaGainRate;
-            //RStaminaMod.LOGGER.info("stamina: " + playerstate.staminaGainRate);
-            if (playerstate.stamina > playerstate.maxStamina) {
-                playerstate.stamina = playerstate.maxStamina;
+            if (playerstate.staminaRegenCooldown <= 0) {
+                if (!player.isSneaking()) {
+                    playerstate.stamina += playerstate.staminaGainRate;
+                    if (playerstate.stamina > playerstate.maxStamina) {
+                        playerstate.stamina = playerstate.maxStamina;
+                    }
+                } else if (player.isSneaking()) {
+                    playerstate.stamina += playerstate.staminaGainRate * 1.75;
+                    if (playerstate.stamina > playerstate.maxStamina) {
+                        playerstate.stamina = playerstate.maxStamina;
+                    }
+                }
             }
 
         }

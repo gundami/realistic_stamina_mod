@@ -30,6 +30,7 @@ public class ServerState extends PersistentState {
             playerStateNbt.putDouble("energy", playerSate.energy);
             playerStateNbt.putDouble("energyFromResting", playerSate.energyFromResting);
             playerStateNbt.putBoolean("edited", playerSate.edited);
+            playerStateNbt.putInt("staminaRegenCooldown", playerSate.staminaRegenCooldown);
             playerStateNbt.putDouble("staminaLossRate", playerSate.staminaLossRate);
             playerStateNbt.putDouble("staminaGainRate", playerSate.staminaGainRate);
             playerStateNbt.putDouble("energyLossRate", playerSate.energyLossRate);
@@ -58,6 +59,7 @@ public class ServerState extends PersistentState {
             playerState.energy = playersTag.getCompound(key).getDouble("energy");
             playerState.energyFromResting = playersTag.getCompound(key).getDouble("energyFromResting");
             playerState.edited = playersTag.getCompound(key).getBoolean("edited");
+            playerState.staminaRegenCooldown = playersTag.getCompound(key).getInt("staminaRegenCooldown");
             playerState.staminaLossRate = playersTag.getCompound(key).getDouble("staminaLossRate");
             playerState.staminaGainRate = playersTag.getCompound(key).getDouble("staminaGainRate");
             playerState.energyLossRate = playersTag.getCompound(key).getDouble("energyLossRate");

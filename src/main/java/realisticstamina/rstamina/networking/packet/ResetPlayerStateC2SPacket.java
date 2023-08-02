@@ -23,6 +23,7 @@ public class ResetPlayerStateC2SPacket {
             playerstate.totalStamina = RStaminaMod.config.totalStamina;
             playerstate.energy = 100.0;
             playerstate.edited = false;
+            playerstate.staminaRegenCooldown = 0;
             playerstate.staminaLossRate = 0.25;
             playerstate.staminaGainRate = 0.125;
             playerstate.energyLossRate = 0.004;

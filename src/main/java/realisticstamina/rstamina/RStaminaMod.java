@@ -5,15 +5,19 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import me.lortseam.completeconfig.data.ConfigOptions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import realisticstamina.rstamina.item.EnergyDrinkItem;
 import realisticstamina.rstamina.item.TestItem;
 import realisticstamina.rstamina.networking.NetworkingPackets;
 
@@ -29,6 +33,8 @@ public class RStaminaMod implements ModInitializer {
 
 	//items
 	public static final TestItem TEST_ITEM = new TestItem(new FabricItemSettings());
+	public static final EnergyDrinkItem ENERGY_DRINK_ITEM = new EnergyDrinkItem(new FabricItemSettings().maxCount(16));
+
 
 	@Override
 	public void onInitialize() {
@@ -39,6 +45,12 @@ public class RStaminaMod implements ModInitializer {
 
 		//items
 		Registry.register(Registries.ITEM, new Identifier("rstamina", "test_item"), TEST_ITEM);
+		Registry.register(Registries.ITEM, new Identifier("rstamina", "energy_drink"), ENERGY_DRINK_ITEM);
+
+		//item groups
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(content -> {
+			content.add(ENERGY_DRINK_ITEM);
+		});
 
 		//networking
 		NetworkingPackets.registerC2SPackets();
@@ -64,10 +76,31 @@ public class RStaminaMod implements ModInitializer {
 				}
 			}
 
+			if (playerState.staminaRegenCooldown != 0) {
+				playerState.staminaRegenCooldown = 0;
+			}
+
+		});
+
+		PlayerBlockBreakEvents.BEFORE.register((world, player, blockPos, state, be) -> {
+
+			ServerState serverState = ServerState.getServerState(player.getWorld().getServer());
+			RStaminaPlayerState playerState = ServerState.getPlayerState(player);
+
+			if (!player.isCreative()) {
+				if (world.getBlockState(blockPos).isSolid()) {
+					playerState.stamina -= 4;
+					playerState.energy -= 0.1;
+					playerState.maxStamina = (playerState.totalStamina * (playerState.energy / 100));
+					playerState.staminaRegenCooldown = 20;
+					serverState.markDirty();
+				}
+			}
+
+			return true;
 		});
 
 		//commands
-
 		//setTotalStamina command
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("setTotalStamina").requires(source -> source.hasPermissionLevel(4))
 				.then(argument("value", IntegerArgumentType.integer())
@@ -101,6 +134,7 @@ public class RStaminaMod implements ModInitializer {
 									playerstate.totalStamina = RStaminaMod.config.totalStamina;
 									playerstate.energy = 100.0;
 									playerstate.edited = false;
+									playerstate.staminaRegenCooldown = 0;
 									playerstate.staminaLossRate = 0.25;
 									playerstate.staminaGainRate = 0.125;
 									playerstate.energyLossRate = 0.004;

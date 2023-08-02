@@ -10,6 +10,8 @@ public class RStaminaPlayerState {
     public double energyFromResting = 0.0;
     public boolean edited = false;
 
+    public int staminaRegenCooldown = 0;
+
     //rates
     public double staminaLossRate = 0.25;
     public double staminaGainRate = 0.125;
