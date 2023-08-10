@@ -22,6 +22,8 @@ public class RStaminaConfig extends Config {
     public int hudX =  10;
     @ConfigEntry(comment = "Y coordinate of stamina and energy hud. 0 is top of the screen. (Default: 25)")
     public int hudY = 25;
+    @ConfigEntry(comment = "Whether or not block breaking uses your stamina. Using a tool with efficiency will still stop stamina from being used. (Default: true)")
+    public boolean breakingBlocksUsesStamina = true;
 
     public RStaminaConfig() {
         super(ConfigOptions.mod(RStaminaMod.modid));

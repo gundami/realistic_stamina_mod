@@ -13,6 +13,7 @@ import java.util.UUID;
 public class ServerState extends PersistentState {
 
     int testInt = 0;
+    String worldVersion = "1.2.0";
 
     public HashMap<UUID, RStaminaPlayerState> players = new HashMap<>();
 

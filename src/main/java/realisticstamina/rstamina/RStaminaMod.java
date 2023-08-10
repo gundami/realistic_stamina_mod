@@ -11,9 +11,11 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.item.ItemGroups;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +23,14 @@ import realisticstamina.rstamina.item.EnergyDrinkItem;
 import realisticstamina.rstamina.item.TestItem;
 import realisticstamina.rstamina.networking.NetworkingPackets;
 
+import java.util.Objects;
+
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class RStaminaMod implements ModInitializer {
 
+	public static final String rStaminaModVersion = "1.3.0";
 	public static final String modid = "rstamina";
 	public static final Logger LOGGER = LoggerFactory.getLogger(modid);
 
@@ -80,6 +85,10 @@ public class RStaminaMod implements ModInitializer {
 				playerState.staminaRegenCooldown = 0;
 			}
 
+			if (!Objects.equals(serverState.worldVersion, rStaminaModVersion)) {
+
+			}
+
 		});
 
 		PlayerBlockBreakEvents.BEFORE.register((world, player, blockPos, state, be) -> {
@@ -87,10 +96,20 @@ public class RStaminaMod implements ModInitializer {
 			ServerState serverState = ServerState.getServerState(player.getWorld().getServer());
 			RStaminaPlayerState playerState = ServerState.getPlayerState(player);
 
-			if (!player.isCreative()) {
+			Hand hand = player.getActiveHand();
+			ItemStack mainStack = player.getStackInHand(hand);
+			boolean hasEfficiency = false;
+
+			for (int i = 0; i < mainStack.getEnchantments().size(); i++) {
+				if (Objects.equals(mainStack.getEnchantments().getCompound(i).getString("id"), "minecraft:efficiency")) {
+					hasEfficiency = true;
+				}
+			}
+			if (!player.isCreative() && !hasEfficiency && config.breakingBlocksUsesStamina) {
+
 				if (world.getBlockState(blockPos).isSolid()) {
 					playerState.stamina -= 4;
-					playerState.energy -= 0.1;
+					playerState.energy -= 0.03;
 					playerState.maxStamina = (playerState.totalStamina * (playerState.energy / 100));
 					playerState.staminaRegenCooldown = 20;
 					serverState.markDirty();
