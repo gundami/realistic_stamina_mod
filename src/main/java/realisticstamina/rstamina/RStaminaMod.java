@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class RStaminaMod implements ModInitializer {
 
-	public static final String rStaminaModVersion = "1.3.0";
+	public static final String rStaminaModVersion = "1.3.1";
 	public static final String modid = "rstamina";
 	public static final Logger LOGGER = LoggerFactory.getLogger(modid);
 
@@ -96,8 +95,8 @@ public class RStaminaMod implements ModInitializer {
 			ServerState serverState = ServerState.getServerState(player.getWorld().getServer());
 			RStaminaPlayerState playerState = ServerState.getPlayerState(player);
 
-			Hand hand = player.getActiveHand();
-			ItemStack mainStack = player.getStackInHand(hand);
+			//Hand hand = Hand.MAIN_HAND;
+			ItemStack mainStack = player.getMainHandStack();
 			boolean hasEfficiency = false;
 
 			for (int i = 0; i < mainStack.getEnchantments().size(); i++) {
