@@ -18,16 +18,18 @@ public class PlayerSleepC2SPacket {
         RStaminaPlayerState playerState = ServerState.getPlayerState(player);
 
         if (RStaminaMod.config.fitnessSystem) {
-            if (playerState.energy < 93.0 && playerState.energy > 79.0) {
-            } else if (playerState.energy < 80.0) {
+
+            double energy = (playerState.energy - playerState.energyFromResting);
+
+            if (energy < RStaminaMod.config.fitnessEnergyToGain) {
                 if (playerState.totalStamina < RStaminaMod.config.fitnessStaminaLimit) {
                     playerState.totalStamina += RStaminaMod.config.fitnessStaminaChange;
-                    player.sendMessageToClient(Text.literal("§a+" + RStaminaMod.config.fitnessStaminaChange + "Total Stamina"), true);
+                    player.sendMessageToClient(Text.literal("§a+" + RStaminaMod.config.fitnessStaminaChange + " Total Stamina"), true);
                 }
-            } else if (playerState.energy > 92.0 && playerState.energy < 100.0) {
+            } else if (energy > RStaminaMod.config.fitnessEnergyToLose && energy < 100.0) {
                 if (playerState.totalStamina > RStaminaMod.config.totalStamina) {
                     playerState.totalStamina -= RStaminaMod.config.fitnessStaminaChange;
-                    player.sendMessageToClient(Text.literal("§c-" + RStaminaMod.config.fitnessStaminaChange + "Total Stamina"), true);
+                    player.sendMessageToClient(Text.literal("§c-" + RStaminaMod.config.fitnessStaminaChange + " Total Stamina"), true);
                     if (playerState.totalStamina < RStaminaMod.config.totalStamina) {
                         playerState.totalStamina = RStaminaMod.config.totalStamina;
                     }

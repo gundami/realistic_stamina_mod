@@ -24,7 +24,7 @@ Your energy will reset to 100% when you exit a bed so you do not have to skip th
 You can drink an energy drink to regenerate 5% of energy.
 
 ### Fitness System
-When enabled, upon sleeping players whose energy is less than 80% will gain a default of 0.25 total stamina.
+When enabled, upon sleeping players whose energy is less than 85% will gain a default of 0.25 total stamina.
 And players whose energy is greater than 92% will lose a default of 0.25 total stamina IF they already have more than the default total.
 By default, players can reach up to 128.0 stamina points with this system.
 
