@@ -13,6 +13,8 @@ import realisticstamina.rstamina.networking.NetworkingPackets;
 
 import java.util.Objects;
 
+import static net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send;
+
 public class RStaminaClient implements ClientModInitializer {
 
     //these numbers are only used to display stats on the client. they do nothing else
@@ -55,7 +57,7 @@ public class RStaminaClient implements ClientModInitializer {
                     MinecraftClient client = MinecraftClient.getInstance();
                     if (client != null) {
                         if (Objects.equals(entity.getName().getString(), client.player.getName().getString())) {
-                            ClientPlayNetworking.send(NetworkingPackets.PLAYER_SLEEP_C2S_PACKET_ID, PacketByteBufs.create());
+                            send(NetworkingPackets.PLAYER_SLEEP_C2S_PACKET_ID, PacketByteBufs.create());
                         }
                     }
                 }

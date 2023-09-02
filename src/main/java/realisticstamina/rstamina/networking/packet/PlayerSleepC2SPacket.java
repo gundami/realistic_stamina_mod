@@ -5,6 +5,8 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import realisticstamina.rstamina.RStaminaMod;
 import realisticstamina.rstamina.RStaminaPlayerState;
 import realisticstamina.rstamina.ServerState;
 
@@ -13,11 +15,29 @@ public class PlayerSleepC2SPacket {
     public static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 
         ServerState serverState = ServerState.getServerState(server);
-        RStaminaPlayerState playerstate = ServerState.getPlayerState(player);
+        RStaminaPlayerState playerState = ServerState.getPlayerState(player);
 
-        playerstate.energy = 100.0;
-        playerstate.maxStamina = (playerstate.totalStamina * (playerstate.energy / 100));
-        playerstate.energyFromResting = 0.0;
+        if (RStaminaMod.config.fitnessSystem) {
+            if (playerState.energy < 93.0 && playerState.energy > 79.0) {
+            } else if (playerState.energy < 80.0) {
+                if (playerState.totalStamina < RStaminaMod.config.fitnessStaminaLimit) {
+                    playerState.totalStamina += RStaminaMod.config.fitnessStaminaChange;
+                    player.sendMessageToClient(Text.literal("§a+" + RStaminaMod.config.fitnessStaminaChange + "Total Stamina"), true);
+                }
+            } else if (playerState.energy > 92.0 && playerState.energy < 100.0) {
+                if (playerState.totalStamina > RStaminaMod.config.totalStamina) {
+                    playerState.totalStamina -= RStaminaMod.config.fitnessStaminaChange;
+                    player.sendMessageToClient(Text.literal("§c-" + RStaminaMod.config.fitnessStaminaChange + "Total Stamina"), true);
+                    if (playerState.totalStamina < RStaminaMod.config.totalStamina) {
+                        playerState.totalStamina = RStaminaMod.config.totalStamina;
+                    }
+                }
+            }
+        }
+
+        playerState.energy = 100.0;
+        playerState.maxStamina = (playerState.totalStamina * (playerState.energy / 100));
+        playerState.energyFromResting = 0.0;
         serverState.markDirty();
 
     }

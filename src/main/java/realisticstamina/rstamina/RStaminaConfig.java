@@ -24,6 +24,14 @@ public class RStaminaConfig extends Config {
     public int hudY = 25;
     @ConfigEntry(comment = "Whether or not block breaking uses your stamina. Using a tool with efficiency will still stop stamina from being used. (Default: true)")
     public boolean breakingBlocksUsesStamina = true;
+    @ConfigEntry(comment = "When enabled, upon sleeping players whose energy is less than 80% will gain a default of 0.25 total stamina. And players whose energy is greater than 92% will lose a default of 0.25 total stamina if they already have more than the default total. (Default: true)")
+    public boolean fitnessSystem = true;
+    @ConfigEntry(comment = "Amount of stamina players gain or loose when the fitness system is enabled. (Default: 0.25)")
+    public double fitnessStaminaChange = 0.25;
+    @ConfigEntry(comment = "Maximum stamina players can reach with the fitness system. (Default: 0.25)")
+    public double fitnessStaminaLimit = 128.0;
+    @ConfigEntry(comment = "Enables or disables the energy system. (Default: true)")
+    public boolean enableEnergySystem = true;
 
     public RStaminaConfig() {
         super(ConfigOptions.mod(RStaminaMod.modid));

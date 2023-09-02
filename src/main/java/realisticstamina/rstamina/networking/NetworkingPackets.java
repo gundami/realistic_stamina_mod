@@ -74,7 +74,6 @@ public class NetworkingPackets {
                 RStaminaClient.clientStoredMaxStamina = maxStamina;
                 RStaminaClient.clientStoredEnergy = energy;
                 RStaminaClient.clientStoredTotalStamina = totalStamina;
-                //RStaminaMod.LOGGER.info("etset: " + totalStamina);
 
             });
         });

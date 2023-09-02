@@ -66,14 +66,6 @@ public class RStaminaMod implements ModInitializer {
 			RStaminaPlayerState playerState = ServerState.getPlayerState(handler.player);
 
 			if (!playerState.edited) { //if the playerstate wasn't edited then match with config
-				if (playerState.totalStamina != config.totalStamina) {
-
-					playerState.totalStamina = config.totalStamina;
-					playerState.maxStamina = (playerState.totalStamina * (playerState.energy / 100));
-					playerState.stamina = playerState.maxStamina;
-					serverState.markDirty();
-
-				}
 				if (playerState.energyGainRate != config.restingEnergyGainTick) {
 					playerState.energyGainRate = config.restingEnergyGainTick;
 					serverState.markDirty();
@@ -94,8 +86,6 @@ public class RStaminaMod implements ModInitializer {
 
 			ServerState serverState = ServerState.getServerState(player.getWorld().getServer());
 			RStaminaPlayerState playerState = ServerState.getPlayerState(player);
-
-			//Hand hand = Hand.MAIN_HAND;
 			ItemStack mainStack = player.getMainHandStack();
 			boolean hasEfficiency = false;
 
@@ -107,9 +97,11 @@ public class RStaminaMod implements ModInitializer {
 			if (!player.isCreative() && !hasEfficiency && config.breakingBlocksUsesStamina) {
 
 				if (world.getBlockState(blockPos).isSolid()) {
-					playerState.stamina -= 4;
-					playerState.energy -= 0.03;
-					playerState.maxStamina = (playerState.totalStamina * (playerState.energy / 100));
+					playerState.stamina -= 2;
+					if (RStaminaMod.config.enableEnergySystem) {
+						playerState.energy -= 0.03;
+						playerState.maxStamina = (playerState.totalStamina * (playerState.energy / 100));
+					}
 					playerState.staminaRegenCooldown = 20;
 					serverState.markDirty();
 				}

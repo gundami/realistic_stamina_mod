@@ -1,15 +1,12 @@
 package realisticstamina.rstamina.client;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import realisticstamina.rstamina.RStaminaClient;
 import realisticstamina.rstamina.RStaminaMod;
-import realisticstamina.rstamina.networking.NetworkingPackets;
 
 public class StaminaHudOverlay implements HudRenderCallback {
 
@@ -30,8 +27,6 @@ public class StaminaHudOverlay implements HudRenderCallback {
         //RenderSystem.setShaderTexture(0, )
 
         if (client != null) {
-
-            ClientPlayNetworking.send(NetworkingPackets.REQUEST_PLAYERSTATE_C2S_PACKET_ID, PacketByteBufs.create());
 
             TextRenderer textRenderer = client.textRenderer;
 

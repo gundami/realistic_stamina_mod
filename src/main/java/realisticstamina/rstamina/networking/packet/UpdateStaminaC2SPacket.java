@@ -1,6 +1,8 @@
 package realisticstamina.rstamina.networking.packet;
 
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -8,8 +10,10 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import realisticstamina.rstamina.RStaminaMod;
 import realisticstamina.rstamina.RStaminaPlayerState;
 import realisticstamina.rstamina.ServerState;
+import realisticstamina.rstamina.networking.NetworkingPackets;
 
 public class UpdateStaminaC2SPacket {
 
@@ -21,9 +25,7 @@ public class UpdateStaminaC2SPacket {
         boolean waterLogged = false;
 
         if (player.getWorld().getBlockState(player.getBlockPos()) == Blocks.WATER.getDefaultState()) {
-
             waterLogged = true;
-
         }
 
         if (playerstate.staminaRegenCooldown > 0) {
@@ -35,8 +37,10 @@ public class UpdateStaminaC2SPacket {
             if (!player.isCreative() && !player.isSpectator()) {
 
                 playerstate.stamina -= playerstate.staminaLossRate;
-                playerstate.energy -= playerstate.energyLossRate;
-                playerstate.maxStamina = (playerstate.totalStamina * (playerstate.energy / 100));
+                if (RStaminaMod.config.enableEnergySystem) {
+                    playerstate.energy -= playerstate.energyLossRate;
+                    playerstate.maxStamina = (playerstate.totalStamina * (playerstate.energy / 100));
+                }
                 serverState.markDirty();
             }
 
@@ -84,6 +88,14 @@ public class UpdateStaminaC2SPacket {
             playerstate.energyFromResting = 0.0;
             playerstate.maxStamina = playerstate.totalStamina;
         }
+
+        PacketByteBuf sendingdata = PacketByteBufs.create();
+        sendingdata.writeDouble(ServerState.getPlayerState(player).stamina); //stamina
+        sendingdata.writeDouble(ServerState.getPlayerState(player).maxStamina); //max stamina
+        sendingdata.writeDouble(ServerState.getPlayerState(player).energy); //total stamina
+        sendingdata.writeDouble(ServerState.getPlayerState(player).totalStamina); //total stamina
+
+        ServerPlayNetworking.send(player, NetworkingPackets.SEND_PLAYERSTATE_S2C_PACKET_ID, sendingdata);
 
     }
 
